@@ -44,6 +44,7 @@ export default class Generic_Record_Page extends LightningElement {
      @track pageNumber = 1;
      @track recordsToDisplay = [];
 
+     
      get GetObjectoptions() {
           return [
                { label: 'Account', value: 'account' },
@@ -60,6 +61,7 @@ export default class Generic_Record_Page extends LightningElement {
 
      ObjectChanges(event) 
      {
+          console.log('This Log for Git CI/CD Changes :)');
           this.ObjectValue = event.detail.value;
           console.log('Object ', this.ObjectValue);
           this.pageNumber = 1;
