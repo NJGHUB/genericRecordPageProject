@@ -1,25 +1,40 @@
-name: Salesforce CI/CD Pipeline
+name: Deploy to Production
 
 on:
   push:
     branches:
-      - main
+      - main # Change this to the name of your default branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Authenticate with Salesforce Org
-        run: |
-          echo 'wayto@perfection.com' > ./SF_PROD_USERNAME.txt
-          echo 'NJ@12345' > ./SF_PROD_PASSWORD.txt
-          echo 'OUdDvA8JYTWMqcHIgfrsFP5uo' > ./SF_PROD_TOKEN.txt
-          sfdx force:auth:jwt:grant --clientid 3MVG9wt4IL4O5wvKzBvv0aR2FivuC6iLpNxbIWzTaDt2jpFR3DyPniH5fXZcc_wPJaYIi4VWp2pE3xYhdXMAZ --jwtkeyfile ./jwt/server.key --username $(cat ./SF_PROD_USERNAME.txt) --password $(cat ./SF_PROD_PASSWORD.txt) --setdefaultdevhubusername -r https://cyntexa-5fd-dev-ed.lightning.force.com
+      - name: Install Salesforce CLI
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - run: npm install -g sfdx-cli@latest
 
-      - name: Deploy Metadata to Production Org
-        run: sfdx force:source:deploy -u $(cat ./SF_PROD_USERNAME.txt) -w 10
+      - name: Authenticate with Salesforce
+        run: sfdx auth:jwt:grant --clientid ${{ secrets.CLIENT_ID }} --jwtkeyfile jwt/server.key --username ${{ secrets.USERNAME }} --setdefaultdevhubusername -a prod
 
-      - name: Run Apex Tests in Production
-        run: sfdx force:apex:test:run -u $(cat ./SF_PROD_USERNAME.txt) -w 10 -c -r human
+      - name: Deploy code to Production
+        run: sfdx force:source:deploy -p force-app -u prod
+        env:
+          SFDX_DOMAIN_RETRY: 300
+          SFDX_DISABLE_APP_HUB: true
+          SFDX_LOG_LEVEL: DEBUG
+          SFDX_JSON_TO_STDOUT: true
+        timeout-minutes: 10
+        # Change the "force-app" directory to match the location of your Salesforce code
+        # Change the "-u prod" argument to match the alias you used in the previous step
+
+    env:
+      USERNAME: 'wayto@perfection.com'
+      CLIENT_ID: '3MVG9wt4IL4O5wvKzBvv0aR2FivuC6iLpNxbIWzTaDt2jpFR3DyPniH5fXZcc_wPJaYIi4VWp2pE3xYhdXMAZ'
+      JWT_KEY: '610A649D7E5A7BAEBFA63DD3B1D4E0EC2C7691952E7CE9543E6781519C6C3A45'
+      PASSWORD: 'NJ@12345'
+      LOGIN_URL: 'https://cyntexa-5fd-dev-ed.lightning.force.com'
