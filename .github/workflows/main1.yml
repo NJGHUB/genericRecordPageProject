@@ -1,34 +1,37 @@
-name: build
+name: Salesforce Deploy and Validate
 
 on:
   push:
-  pull_request:
-    branches: [ main ]
-    paths:
-    - '**.cs'
-    - '**.csproj'
-
-env:
-  DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
+    branches:
+      - main
 
 jobs:
-  build:
-
-    name: build-${{matrix.os}}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-
+  deploy-and-validate:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Install dependencies
-      run: dotnet restore
+      - name: Checkout code
+        uses: actions/checkout@v2
       
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+
+      - name: Install Salesforce CLI
+        run: |
+          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
+          sudo ./sfdx/install
+      
+      - name: Authenticate with Salesforce Org
+        uses: salesforce-actions/setup-sfdx@v1
+        with:
+          sfdx-version: 'latest'
+          auth-url: ${{ 'https://cyntexa-5fd-dev-ed.lightning.force.com' }}
+          
+      - name: Deploy metadata
+        run: |
+          sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal --wait 10
+
+      - name: Validate deployment
+        run: |
+          sfdx force:apex:test:run --testlevel RunLocalTests --json --loglevel error
