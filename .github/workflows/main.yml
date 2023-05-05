@@ -22,7 +22,7 @@ jobs:
 
       - name: Authenticate with Salesforce Org
         run: |
-          sfdx force:auth:jwt:grant --clientid ${{'3MVG9wt4IL4O5wvKzBvv0aR2FivuC6iLpNxbIWzTaDt2jpFR3DyPniH5fXZcc_wPJaYIi4VWp2pE3xYhdXMAZ'}} --jwtkeyfile ./server.key --username ${{'wayto@perfection.com'}} --setdefaultdevhubusername -a HubOrg
+          sfdx force:auth:jwt:grant --clientid ${{ secrets.SF_CONSUMER_KEY }} --jwtkeyfile ./server.key --username ${{ secrets.SF_USERNAME }} --setdefaultdevhubusername -a HubOrg
 
       - name: Validate Metadata
         run: |
