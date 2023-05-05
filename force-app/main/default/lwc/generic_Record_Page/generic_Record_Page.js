@@ -4,7 +4,7 @@ import { LightningElement, track, wire } from 'lwc';
 import getAccountList from '@salesforce/apex/GenericRecordPageApex.getAccountList';
 import getContactList from '@salesforce/apex/GenericRecordPageApex.getContactList';
 import getOpportunityList from '@salesforce/apex/GenericRecordPageApex.getOpportunityList';
- 
+
 const AccountColumns = [
      { label: 'Name', fieldName: 'Name', sortable: true },
      { label: 'Number Of Employees', fieldName: 'NumberOfEmployees', sortable: true },
@@ -44,7 +44,6 @@ export default class Generic_Record_Page extends LightningElement {
      @track pageNumber = 1;
      @track recordsToDisplay = [];
 
-     
      get GetObjectoptions() {
           return [
                { label: 'Account', value: 'account' },
@@ -61,7 +60,6 @@ export default class Generic_Record_Page extends LightningElement {
 
      ObjectChanges(event) 
      {
-          console.log('This Log for Git CI/CD Changes :)');
           this.ObjectValue = event.detail.value;
           console.log('Object ', this.ObjectValue);
           this.pageNumber = 1;
