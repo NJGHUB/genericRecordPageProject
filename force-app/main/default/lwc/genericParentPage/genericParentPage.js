@@ -11,7 +11,7 @@ const AccountColumns = [
     { label: 'Annual Revenue', fieldName: 'AnnualRevenue', sortable: true },
     { label: 'Owner', fieldName: 'Owner', sortable: true },
 ];
- 
+
 const Contactcolumns = [
     { label: 'First Name', fieldName: 'FirstName', sortable: true },
     { label: 'Last Name', fieldName: 'LastName', sortable: true },
