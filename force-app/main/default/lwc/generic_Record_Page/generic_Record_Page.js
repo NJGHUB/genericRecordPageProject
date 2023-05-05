@@ -4,7 +4,7 @@ import { LightningElement, track, wire } from 'lwc';
 import getAccountList from '@salesforce/apex/GenericRecordPageApex.getAccountList';
 import getContactList from '@salesforce/apex/GenericRecordPageApex.getContactList';
 import getOpportunityList from '@salesforce/apex/GenericRecordPageApex.getOpportunityList';
- 
+
 const AccountColumns = [
      { label: 'Name', fieldName: 'Name', sortable: true },
      { label: 'Number Of Employees', fieldName: 'NumberOfEmployees', sortable: true },
