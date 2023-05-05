@@ -1,0 +1,32 @@
+name: Salesforce Build Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        uses: salesforcecli/install-sfdx-action@v1
+        with:
+          version: 'latest'
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run tests
+        run: |
+          sfdx force:apex:test:run --wait 10
+
+      - name: Validate package
+        run: |
+          sfdx force:package:validate --wait 10
