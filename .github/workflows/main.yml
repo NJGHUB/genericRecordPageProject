@@ -1,0 +1,28 @@
+name: Deploy to Salesforce
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout GitHub repo
+      uses: actions/checkout@v2
+
+    - name: Install Salesforce CLI
+      run: |
+        curl https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
+        ./sfdx/install
+
+    - name: Authenticate with Salesforce Org
+      uses: sfdx-actions/auth@v1
+      with:
+        sfdx-cli-package-version: '7.x'
+
+    - name: Deploy to Salesforce Org
+      run: |
+        sfdx force:source:deploy -p force-app -u wayto@perfection.com
