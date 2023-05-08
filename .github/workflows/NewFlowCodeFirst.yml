@@ -1,4 +1,3 @@
-
 name: Deploy to Salesforce Org
 on:
   push:
@@ -19,6 +18,13 @@ jobs:
       - name: Authenticate with Salesforce
         run: |
           ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }}  --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com  --setdefaultdevhubusername -a DevHub
+      - name: Authenticate with Salesforce using Password
+        env:
+          SF_USERNAME: ${{ 'wayto@perfection.com' }}
+          SF_PASSWORD: ${{ 'NJ@12345' }}
+          SF_LOGIN_URL: https://login.salesforce.com
+        run: |
+          ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
       - name: Deploy code to Salesforce
         run: |
           ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
