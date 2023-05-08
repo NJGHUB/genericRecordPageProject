@@ -1,0 +1,19 @@
+name: Deploy to Salesforce Org
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Authenticate with Salesforce
+        uses: sfdx/actions/setup-sfdx@v1
+        with:
+          sfdx-version: 'latest'
+      - name: Deploy code to Salesforce
+        run: |
+          sfdx force:auth:jwt:grant --clientid ${{ 3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K }} --jwtkeyfile server.key --username ${{ wayto@perfection.com }} --setdefaultdevhubusername -a DevHub
+          sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
