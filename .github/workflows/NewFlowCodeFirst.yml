@@ -25,4 +25,4 @@ jobs:
           ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
       - name: Deploy code to Salesforce
         run: |
-          ./sfdx/bin/sfdx force:auth:web:login -a wayto@perfection.com
+          ./sfdx/bin/sfdx force:source:deploy --targetusername ${{ 'wayto@perfection.com' }} --json --loglevel fatal --checkonly --sourcepath force-app/main/default/
