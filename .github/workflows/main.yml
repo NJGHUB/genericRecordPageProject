@@ -1,28 +1,23 @@
-name: Deploy to Salesforce
-
+name: Deploy Salesforce code
 on:
   push:
     branches:
       - master
-
 jobs:
-  deploy:
+  deploy-salesforce:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout GitHub repo
-      uses: actions/checkout@v2
-
-    - name: Install Salesforce CLI
-      run: |
-        curl https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
-        ./sfdx/install
-
-    - name: Authenticate with Salesforce Org
-      uses: sfdx-actions/auth@v1
-      with:
-        sfdx-cli-package-version: '7.x'
-
-    - name: Deploy to Salesforce Org
-      run: |
-        sfdx force:source:deploy -p force-app -u wayto@perfection.com
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Authenticate with Salesforce org
+        uses: sforce/cli@v1
+        with:
+          cli: 'sfdx'
+          version: 'latest'
+        env:
+          SFDX_AUTH_URL: 'n1VBV100Tkni7FxDy9SNJbvUM'
+          SFDX_CLIENT_ID: '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'
+          SFDX_USERNAME: 'wayto@perfection.com'
+      - name: Deploy to Salesforce org
+        run: |
+          sfdx force:source:deploy --sourcepath force-app/main/default --targetusername 'wayto@perfection.com'
