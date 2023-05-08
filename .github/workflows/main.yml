@@ -9,11 +9,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -t my-sfdx-image .
       - name: Authenticate with Salesforce org
-        uses: sforce/cli@v1
+        uses: docker://my-sfdx-image
         with:
-          cli: 'sfdx'
-          version: 'latest'
+          args: sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'  --jwtkeyfile jwt/server.key --username 'wayto@perfection.com'  --setdefaultdevhubusername -a DevHub
         env:
           SFDX_AUTH_URL: 'n1VBV100Tkni7FxDy9SNJbvUM'
           SFDX_CLIENT_ID: '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'
