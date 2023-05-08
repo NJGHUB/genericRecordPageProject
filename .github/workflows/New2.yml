@@ -1,0 +1,29 @@
+name: Deploy to Salesforce Org
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          ./sfdx/install
+      
+      - name: Authenticate with Salesforce using Password
+        env:
+          SF_USERNAME: wayto@perfection.com
+          SF_PASSWORD: ${{ 'NJ@12345' }}
+          SF_LOGIN_URL: https://login.salesforce.com
+        run: |
+          ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
+          
+      - name: Deploy code to Salesforce
+        run: |
+          ./sfdx/bin/sfdx force:source:deploy --targetusername wayto@perfection.com --json --loglevel fatal --checkonly --sourcepath force-app/main/default/
