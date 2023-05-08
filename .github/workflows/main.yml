@@ -1,33 +1,21 @@
 name: Deploy to Salesforce
-
 on:
   push:
-    branches: [ master ]
-
+    branches:
+      - master
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
+      - uses: actions/checkout@v2
+      - name: Setup Salesforce CLI
+        uses: salesforcecli/setup-sfdx@v1
         with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
-
-      - name: Install Salesforce CLI
+          version: 'latest'
+      - name: Install Dependencies
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-          ./sfdx/install
-
-      - name: Deploy code to Salesforce
-        env:
-          SFDX_AUTH_URL: 'https://cyntexa-5fd-dev-ed.lightning.force.com'
+          npm install
+      - name: Deploy to Salesforce Org
         run: |
-          sfdx force:auth:sfdxurl:store -r https://cyntexa-5fd-dev-ed.lightning.force.com -d -a wayto@perfection.com
-          sfdx force:source:deploy -p force-app/main/default
+          sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile ${{ SERVER }} --username 'wayto@perfection.com'
+          sfdx force:source:deploy --sourcepath force-app/main/default --wait 10
