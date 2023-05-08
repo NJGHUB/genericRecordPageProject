@@ -29,5 +29,5 @@ jobs:
         env:
           SFDX_AUTH_URL: 'https://cyntexa-5fd-dev-ed.lightning.force.com'
         run: |
-          sfdx force:auth:sfdxurl:store -f 'https://cyntexa-5fd-dev-ed.lightning.force.com' -d -a 'wayto@perfection.com'
+          sfdx force:auth:sfdxurl:store -r https://cyntexa-5fd-dev-ed.lightning.force.com -d -a wayto@perfection.com
           sfdx force:source:deploy -p force-app/main/default
