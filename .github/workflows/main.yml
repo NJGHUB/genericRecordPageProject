@@ -1,24 +1,33 @@
-name: Deploy Salesforce code
+name: Deploy to Salesforce
+
 on:
   push:
     branches:
-      - master 
+      - master
+
 jobs:
-  deploy-salesforce:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Build Docker image
-        run: docker build -t my-sfdx-image .
-      - name: Authenticate with Salesforce org
-        uses: docker://my-sfdx-image
+
+      - name: Setup Salesforce CLI
+        uses: salesforcecli/action-setup@v1
         with:
-          args: sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'  --jwtkeyfile jwt/server.key --username 'wayto@perfection.com'  --setdefaultdevhubusername -a DevHub
-        env:
-          SFDX_AUTH_URL: 'n1VBV100Tkni7FxDy9SNJbvUM'
-          SFDX_CLIENT_ID: '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'
-          SFDX_USERNAME: 'wayto@perfection.com'
-      - name: Deploy to Salesforce org
+          version: 'latest'
+
+      - name: Authenticate with Salesforce Org
         run: |
-          sfdx force:source:deploy --sourcepath force-app/main/default --targetusername 'wayto@perfection.com'
+          echo 'wayto@perfection.com'
+          echo 'NJ@12345'
+          echo 'https://login.salesforce.com'
+          sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile server.key --username 'wayto@perfection.com' --password 'NJ@12345' --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com
+
+      - name: Deploy code to Salesforce Org
+        run: |
+          sfdx force:source:deploy -x manifest/package.xml -u 'wayto@perfection.com'
+
+      - name: Check deployment status
+        run: |
+          sfdx force:source:deploy:report -u 'wayto@perfection.com'
