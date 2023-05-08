@@ -9,11 +9,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          ./sfdx/install
       - name: Authenticate with Salesforce
-        uses: sfdx/actions/setup-sfdx@v1
-        with:
-          sfdx-version: 'latest'
+        run: |
+          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }} --setdefaultdevhubusername -a DevHub
       - name: Deploy code to Salesforce
         run: |
-          sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }} --setdefaultdevhubusername -a DevHub
-          sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
+          ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
