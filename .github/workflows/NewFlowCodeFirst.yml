@@ -7,11 +7,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
-      SFDX_CLIENT_ID: ${{ secrets.SFDX_CLIENT_ID }}
-      SFDX_JWT_KEY: ${{ secrets.SFDX_JWT_KEY }}
-      SFDX_USERNAME: ${{ secrets.SFDX_USERNAME }}
-      SFDX_INSTANCE_URL: ${{ secrets.SFDX_INSTANCE_URL }}
+      SFDX_AUTH_URL: ${{ 'https://cyntexa-5fd-dev-ed.lightning.force.com' }}
+      SFDX_CLIENT_ID: ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }}
+      SFDX_JWT_KEY: ${{ '08181BB93267665285FC848DFFEECBD151131549F713076A91DF4A1B0575E1BF' }}
+      SFDX_USERNAME: ${{ 'wayto@perfection.com' }}
+      SFDX_INSTANCE_URL: ${{ 'https://cyntexa-5fd-dev-ed.lightning.force.com' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
