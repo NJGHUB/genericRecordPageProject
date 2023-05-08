@@ -4,9 +4,9 @@ on:
     branches:
       - master
 jobs:
-  deploy:
+   deploy:
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -23,6 +23,7 @@ jobs:
           mkdir sfdx
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
           ./sfdx/install
+  
       - name: Deploy to Salesforce Org
         run: |
           sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile ${{ secrets.SERVER }} --username 'wayto@perfection.com'
