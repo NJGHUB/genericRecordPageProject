@@ -2,7 +2,7 @@ name: Deploy Salesforce code
 on:
   push:
     branches:
-      - master
+      - master 
 jobs:
   deploy-salesforce:
     runs-on: ubuntu-latest
