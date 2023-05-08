@@ -29,7 +29,7 @@ const Opportunitycolums = [
 ]; 
   
 export default class GenericParentPage extends LightningElement {
-
+ 
     @track ObjectValue = 'Select Object';
     records = [];
     columns;
