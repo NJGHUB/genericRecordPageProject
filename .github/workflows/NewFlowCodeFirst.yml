@@ -18,7 +18,8 @@ jobs:
           ./sfdx/install
       - name: Authenticate with Salesforce
         run: |
-          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }}  --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com  --setdefaultdevhubusername -a DevHub
+          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile ~/Documents/salesforce/server.key --username 'wayto@perfection.com' --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com
+
       - name: Deploy code to Salesforce
         run: |
           ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
