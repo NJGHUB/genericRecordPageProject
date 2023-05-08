@@ -18,11 +18,11 @@ jobs:
       
       - name: Authenticate with Salesforce using Password
         env:
-          SF_USERNAME: ${{ 'wayto@perfection.com' }}
-          SF_PASSWORD: ${{ 'NJ@12345' }}
+          SF_USERNAME: wayto@perfection.com
+          SF_PASSWORD: NJ@12345
           SF_LOGIN_URL: https://login.salesforce.com
         run: |
-          ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
+          ./sfdx/bin/sfdx force:auth:password:generate wayto@perfection.com --json --loglevel fatal
       - name: Deploy code to Salesforce
         run: |
           ./sfdx/bin/sfdx force:auth:web:login -a wayto@perfection.com
