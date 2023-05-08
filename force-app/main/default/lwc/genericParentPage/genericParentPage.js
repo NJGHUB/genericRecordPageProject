@@ -27,7 +27,7 @@ const Opportunitycolums = [
     { label: 'Stage Name', fieldName: 'StageName', sortable: true },
     { label: 'Account', fieldName: 'AccountName', sortable: true },
 ];
- 
+  
 export default class GenericParentPage extends LightningElement {
 
     @track ObjectValue = 'Select Object';
