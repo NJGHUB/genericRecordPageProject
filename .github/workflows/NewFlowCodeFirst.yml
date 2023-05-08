@@ -1,4 +1,3 @@
-
 name: Deploy to Salesforce Org
 on:
   push:
@@ -16,9 +15,14 @@ jobs:
           mkdir sfdx
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
           ./sfdx/install
-      - name: Authenticate with Salesforce
+      
+      - name: Authenticate with Salesforce using Password
+        env:
+          SF_USERNAME: ${{ 'wayto@perfection.com' }}
+          SF_PASSWORD: ${{ 'NJ@12345' }}
+          SF_LOGIN_URL: https://login.salesforce.com
         run: |
-          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }}  --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com  --setdefaultdevhubusername -a DevHub
+          ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
       - name: Deploy code to Salesforce
         run: |
-          ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
+          ./sfdx/bin/sfdx force:auth:web:login -a wayto@perfection.com
