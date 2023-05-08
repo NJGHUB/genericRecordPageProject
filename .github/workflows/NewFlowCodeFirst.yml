@@ -22,7 +22,16 @@ jobs:
           SF_PASSWORD: ${{ 'NJ@12345' }}
           SF_LOGIN_URL: https://login.salesforce.com
         run: |
-          ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
+          ./sfdx/bin/sfdx force:auth:web:login -a ${'wayto@perfection.com'}
+      
+      - name: Set default org
+        run: |
+          ./sfdx/bin/sfdx force:config:set defaultusername=${'wayto@perfection.com'}
+      
+      - name: List authenticated orgs
+        run: |
+          ./sfdx/bin/sfdx force:org:list
+      
       - name: Deploy code to Salesforce
         run: |
-          ./sfdx/bin/sfdx force:source:deploy --targetusername ${{ 'wayto@perfection.com' }} --json --loglevel fatal --checkonly --sourcepath force-app/main/default/
+          ./sfdx/bin/sfdx force:source:deploy --targetusername ${'wayto@perfection.com'} --json --loglevel fatal --checkonly --sourcepath force-app/main/default/
