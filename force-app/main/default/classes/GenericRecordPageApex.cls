@@ -20,5 +20,5 @@ public class GenericRecordPageApex
     public static Account getAccount(String recordId)
     {
         return [Select Id, Name, BillingStreet, Phone, Website,Owner.Name from Account Where Id =:recordId];
-    }
+    }   
 }
