@@ -2,32 +2,21 @@ name: Deploy to Salesforce
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Salesforce CLI
-        uses: salesforcecli/action-setup@v1
-        with:
-          version: 'latest'
-
-      - name: Authenticate with Salesforce Org
-        run: |
-          echo 'wayto@perfection.com'
-          echo 'NJ@12345'
-          echo 'https://login.salesforce.com'
-          sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile server.key --username 'wayto@perfection.com' --password 'NJ@12345' --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com
-
-      - name: Deploy code to Salesforce Org
-        run: |
-          sfdx force:source:deploy -x manifest/package.xml -u 'wayto@perfection.com'
-
-      - name: Check deployment status
-        run: |
-          sfdx force:source:deploy:report -u 'wayto@perfection.com'
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install Salesforce CLI
+      run: |
+        curl https://developer.salesforce.com/media/salesforce-cli/sfdx-cli/channels/stable/sfdx-cli-linux-x64.tar.xz | tar xJf -
+        ./sfdx/install
+    - name: Deploy code to Salesforce
+      env:
+        SFDX_AUTH_URL: 'https://cyntexa-5fd-dev-ed.lightning.force.com'
+      run: |
+        sfdx force:auth:sfdxurl:store -f 'https://cyntexa-5fd-dev-ed.lightning.force.com' -d -a 'wayto@perfection.com'
+        sfdx force:source:deploy -p force-app/main/default
