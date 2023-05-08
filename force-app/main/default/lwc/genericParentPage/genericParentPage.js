@@ -26,7 +26,7 @@ const Opportunitycolums = [
     { label: 'Amount', fieldName: 'Amount', sortable: true },
     { label: 'Stage Name', fieldName: 'StageName', sortable: true },
     { label: 'Account', fieldName: 'AccountName', sortable: true },
-];
+]; 
   
 export default class GenericParentPage extends LightningElement {
 
