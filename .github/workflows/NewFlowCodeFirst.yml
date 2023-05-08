@@ -35,4 +35,4 @@ jobs:
 
       - name: Deploy code to Salesforce
         run: |
-          ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
+          ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal -u wayto@perfection.com
