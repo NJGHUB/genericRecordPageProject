@@ -6,6 +6,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+      SFDX_CLIENT_ID: ${{ secrets.SFDX_CLIENT_ID }}
+      SFDX_JWT_KEY: ${{ secrets.SFDX_JWT_KEY }}
+      SFDX_USERNAME: ${{ secrets.SFDX_USERNAME }}
+      SFDX_INSTANCE_URL: ${{ secrets.SFDX_INSTANCE_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -17,8 +23,8 @@ jobs:
           ./sfdx/install
       - name: Authenticate with Salesforce
         run: |
-          echo "${{'08181BB93267665285FC848DFFEECBD151131549F713076A91DF4A1B0575E1BF'}}" | base64 --decode > server.key
-          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }} --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com --setdefaultdevhubusername -a DevHub
+          echo "${SFDX_JWT_KEY}" | base64 --decode > server.key
+          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid "${SFDX_CLIENT_ID}" --jwtkeyfile server.key --username "${SFDX_USERNAME}" --instanceurl "${SFDX_INSTANCE_URL}" --setdefaultdevhubusername -a DevHub
       - name: Deploy code to Salesforce
         run: |
           ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
