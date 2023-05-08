@@ -6,15 +6,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Salesforce CLI
-        uses: salesforcecli/setup-sfdx@v1
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Salesforce CLI dependencies
+        uses: actions/cache@v2
         with:
-          version: 'latest'
-      - name: Install Dependencies
+          path: ~/.local/share/sfdx/
+          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
+          restore-keys: sfdx-dependencies-${{ runner.os }}-
+
+      - name: Install Salesforce CLI
         run: |
-          npm install
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          ./sfdx/install
       - name: Deploy to Salesforce Org
         run: |
           sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile ${{ secrets.SERVER }} --username 'wayto@perfection.com'
