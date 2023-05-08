@@ -3,28 +3,19 @@ on:
   push:
     branches:
       - master
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
-
       - name: Install Salesforce CLI
         run: |
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
           mkdir sfdx
           tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
           ./sfdx/install
-
+      
       - name: Authenticate with Salesforce using Password
         env:
           SF_USERNAME: ${{ 'wayto@perfection.com' }}
@@ -32,7 +23,6 @@ jobs:
           SF_LOGIN_URL: https://login.salesforce.com
         run: |
           ./sfdx/bin/sfdx force:auth:password:generate --setdefaultusername --json --loglevel fatal
-
       - name: Deploy code to Salesforce
         run: |
-          ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal -u wayto@perfection.com
+          ./sfdx/bin/sfdx force:auth:web:login -a wayto@perfection.com
