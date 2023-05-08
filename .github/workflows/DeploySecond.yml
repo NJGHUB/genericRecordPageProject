@@ -35,8 +35,8 @@ jobs:
           SFDX_CLIENT_ID: ${{ secrets.SFDX_CLIENT_ID }}
         run: |
           echo "${SFDX_JWT_KEY}" > server.key
-          npx sfdx force:auth:jwt:grant --clientid "${SFDX_CLIENT_ID}" --jwtkeyfile server.key --username gfarb@github.dreamforce --setdefaultdevhubusername
-          npx sfdx force:org:display --json -u gfarb@github.dreamforce > sfdx-auth.json
+          npx sfdx force:auth:jwt:grant --clientid "${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}" --jwtkeyfile server.key --username NJGHUB --setdefaultdevhubusername
+          npx sfdx force:org:display --json -u  NJGHUB > sfdx-auth.json
           rm server.key
 
       - name: Build, Test & Deploy
