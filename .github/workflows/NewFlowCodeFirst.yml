@@ -1,3 +1,4 @@
+
 name: Deploy to Salesforce Org
 on:
   push:
@@ -6,12 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      SFDX_AUTH_URL: ${{ 'https://cyntexa-5fd-dev-ed.lightning.force.com' }}
-      SFDX_CLIENT_ID: ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }}
-      SFDX_JWT_KEY: ${{ '08181BB93267665285FC848DFFEECBD151131549F713076A91DF4A1B0575E1BF' }}
-      SFDX_USERNAME: ${{ 'wayto@perfection.com' }}
-      SFDX_INSTANCE_URL: ${{ 'https://cyntexa-5fd-dev-ed.lightning.force.com' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,8 +18,7 @@ jobs:
           ./sfdx/install
       - name: Authenticate with Salesforce
         run: |
-          echo "${SFDX_JWT_KEY}" | base64 --decode > server.key
-          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid "${SFDX_CLIENT_ID}" --jwtkeyfile server.key --username "${SFDX_USERNAME}" --instanceurl "${SFDX_INSTANCE_URL}" --setdefaultdevhubusername -a DevHub
+          ./sfdx/bin/sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }}  --instanceurl https://cyntexa-5fd-dev-ed.lightning.force.com  --setdefaultdevhubusername -a DevHub
       - name: Deploy code to Salesforce
         run: |
           ./sfdx/bin/sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
