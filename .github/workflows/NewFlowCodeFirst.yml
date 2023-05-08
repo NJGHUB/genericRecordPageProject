@@ -15,5 +15,5 @@ jobs:
           sfdx-version: 'latest'
       - name: Deploy code to Salesforce
         run: |
-          sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ wayto@perfection.com }} --setdefaultdevhubusername -a DevHub
+          sfdx force:auth:jwt:grant --clientid ${{ '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' }} --jwtkeyfile server.key --username ${{ 'wayto@perfection.com' }} --setdefaultdevhubusername -a DevHub
           sfdx force:source:deploy --sourcepath force-app --json --loglevel fatal
