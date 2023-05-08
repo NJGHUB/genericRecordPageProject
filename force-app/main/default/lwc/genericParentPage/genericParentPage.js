@@ -19,7 +19,7 @@ const Contactcolumns = [
     { label: 'Phone', fieldName: 'Phone', sortable: true },
     { label: 'Email', fieldName: 'Email', sortable: true }
 ];
-
+ 
 const Opportunitycolums = [
     { label: 'Name', fieldName: 'Name', sortable: true },
     { label: 'Created Date', fieldName: 'CreatedDate', sortable: true },
