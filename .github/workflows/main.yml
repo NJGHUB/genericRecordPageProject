@@ -1,40 +1,23 @@
-name: Deploy to Salesforce
 on:
   push:
     branches:
       - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Node.js environment
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-      - name: Install Dependencies
-        run: npm install
 
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Install Salesforce CLI
-        run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-          ./sfdx/install
+        uses: forcedotcom/sfdx-ci@v1
+        with:
+          version: 'latest'
 
-      - name: Deploy to Salesforce
-        env:
-          PRIVATE_KEY: ${{ secrets.SERVER }}
-          USERNAME: 'wayto@perfection.com'
-          PASSWORD: 'NJ@1234'
-        run: |
-          sfdx force:auth:jwt:grant --clientid 3MVG9wt4IL4O5wvKzBvv0aR2Fin3JA8OiJSJSsEl0FSHnT0xiP.kYR7qnABSBQ1RVKaCzkJL5ol9tLTxMwPes --jwtkeyfile /newJWT/server.key --username wayto@perfection.com --setdefaultdevhubusername --setalias NLalw
-          sfdx force:source:deploy --sourcepath force-app/main/default --json
+      - name: Authenticate with Salesforce Org
+        run: sfdx force:auth:jwt:grant --clientid ${{ secrets.CLIENT_ID }} --jwtkeyfile ${{ secrets.SERVER }} --username ${{ secrets.USERNAME }} --setdefaultdevhubusername --setalias 'NLalw'
+
+      - name: Deploy code to Salesforce Org
+        run: sfdx force:source:deploy --sourcepath force-app --json -u https://cyntexa-5fd-dev-ed.lightning.force.com
