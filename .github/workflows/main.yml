@@ -7,24 +7,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
-
       - name: Install Salesforce CLI
         run: |
-          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-cli/channels/stable/sfdx-cli-stable-linux-x64.tar.xz | tar xJf -
-          export PATH=$PATH:/path/to/sfdx/bin
-          sfdx --version
-
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          ./sfdx/install
 
       - name: Create JWT token
         run: |
