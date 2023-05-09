@@ -12,15 +12,23 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Cache Salesforce CLI dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/sfdx/
+          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
+          restore-keys: sfdx-dependencies-${{ runner.os }}-
 
       - name: Install Salesforce CLI
         run: |
-          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
-          sudo ./sfdx/install
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          mkdir sfdx
+          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          ./sfdx/install
 
       - name: Authenticate to Salesforce Org
         run: |
