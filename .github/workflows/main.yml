@@ -1,30 +1,32 @@
-name: Deploy to Salesforce
+name: Deploy to Salesforce Org
+
 on:
   push:
     branches:
       - master
-jobs:
-   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
+env:
+  SFDX_DOMAIN_RETRY: 3
+  SFDX_AUTOUPDATE_DISABLE: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
       - name: Install Salesforce CLI
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-          ./sfdx/install
-  
+          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
+          sudo ./sfdx/install
+
+      - name: Authenticate to Salesforce Org
+        run: |
+          echo ${{ secrets.SERVER }} | base64 --decode > server.key
+          sfdx force:auth:jwt:grant --clientid 3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K --jwtkeyfile server.key --username wayto@perfection.com --setdefaultdevhubusername -a wayto@perfection.com
+
       - name: Deploy to Salesforce Org
         run: |
-          sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K'  --username wayto@perfection.com  --jwtkeyfile ${{ secrets.SERVER }}  --setdefaultdevhubusername
-          sfdx force:source:deploy --sourcepath force-app/main/default --wait 10
+          sfdx force:source:deploy --sourcepath force-app/ --json --loglevel fatal --targetusername MyHubOrg
