@@ -15,8 +15,6 @@ jobs:
           node-version: '14.x'
       - name: Install Dependencies
         run: npm install
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Cache Salesforce CLI dependencies
         uses: actions/cache@v2
