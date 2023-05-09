@@ -18,9 +18,6 @@ jobs:
           path: ~/.local/share/sfdx/
           key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
           restore-keys: sfdx-dependencies-${{ runner.os }}-
-      - name: Check Salesforce CLI version
-        run: |
-          sfdx --version
 
       - name: Install Salesforce CLI
         run: |
