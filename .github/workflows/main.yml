@@ -1,23 +1,19 @@
-name: Deploy to Salesforce Org
+name: Salesforce Deployment
+
 on:
   push:
-    branches: [ master ] # Replace main with your desired branch
+    branches:
+      - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Salesforce CLI
-        uses: salesforcecli/sfdx-cli-action@v1
-        with:
-          version: 'latest'
-      - name: Authenticate with Salesforce Org
-        run: |
-          sfdx auth:jwt:grant --clientid ${{ secrets.CLIENT_ID }} \
-          --jwtkeyfile <(echo ${{ secrets.SERVER }} | base64 -d) \
-          --username ${{ secrets.USERNAME }} --setdefaultdevhubusername
-      - name: Deploy to Salesforce Org
-        run: |
-          sfdx force:source:deploy -u ${{ secrets.USERNAME }}
-
+        uses: salesforcecli/setup-sfdx@v1
+      - name: Authenticate with Salesforce
+        run: sfdx force:auth:jwt:grant --clientid ${{ secrets.CLIENT_ID }} --jwtkeyfile server.key --username ${{ secrets.USERNAME }} --setdefaultdevhubusername -a ${{ secrets.USERNAME }} 
+      - name: Deploy to Salesforce
+        run: sfdx force:source:deploy --wait 10 --testlevel RunLocalTests --sourcepath force-app/main/default/classes/MyApexClass.cls-meta.xml
