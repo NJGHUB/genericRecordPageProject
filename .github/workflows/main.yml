@@ -1,40 +1,26 @@
-name: Deploy to Salesforce Org
-
+name: Deploy to Salesforce
 on:
   push:
     branches:
       - master
-
-env:
-  SFDX_DOMAIN_RETRY: 3
-  SFDX_AUTOUPDATE_DISABLE: true
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Cache Salesforce CLI dependencies
-        uses: actions/cache@v2
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v1
         with:
-          path: ~/.local/share/sfdx/
-          key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
-          restore-keys: sfdx-dependencies-${{ runner.os }}-
-
-      - name: Install Salesforce CLI
+          node-version: '14.x'
+      - name: Install Dependencies
+        run: npm install
+      - name: Deploy to Salesforce
+        env:
+          PRIVATE_KEY: ${{ secrets.SERVER }}
+          USERNAME: 'wayto@perfection.com'
+          PASSWORD: 'NJ@1234'
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-          ./sfdx/install
-
-      - name: Authenticate to Salesforce Org
-        run: |
-          echo ${{ secrets.SERVER }} | base64 --decode > server.key
-          sfdx force:auth:jwt:grant --clientid 3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K --jwtkeyfile server.key --username wayto@perfection.com --setdefaultdevhubusername -a wayto@perfection.com
-
-      - name: Deploy to Salesforce Org
-        run: |
-          sfdx force:source:deploy --sourcepath force-app/ --json --loglevel fatal --targetusername MyHubOrg
+          echo "$PRIVATE_KEY" > key.pem
+          sfdx force:auth:jwt:grant --clientid '3MVG9wt4IL4O5wvKzBvv0aR2Fik7NckrjbvoOWYN8JBqhtRfqqNgM_Yw.okbJnLyfqBpILU_IOWugt2n1ez4K' --jwtkeyfile key.pem --username 'wayto@perfection.com' --setdefaultdevhubusername --instanceurl https://login.salesforce.com
+          sfdx force:source:deploy --sourcepath force-app/main/default --json
