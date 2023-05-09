@@ -18,13 +18,16 @@ jobs:
           path: ~/.local/share/sfdx/
           key: sfdx-dependencies-${{ runner.os }}-${{ hashFiles('**/sfdx-project.json') }}
           restore-keys: sfdx-dependencies-${{ runner.os }}-
+      - name: Check Salesforce CLI version
+        run: |
+          sfdx --version
 
       - name: Install Salesforce CLI
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-          ./sfdx/install
+          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-cli/channels/stable/sfdx-cli-stable-linux-x64.tar.xz | tar xJf -
+          export PATH=$PATH:/path/to/sfdx/bin
+          sfdx --version
+
 
       - name: Create JWT token
         run: |
