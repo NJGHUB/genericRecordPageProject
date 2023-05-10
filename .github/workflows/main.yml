@@ -29,10 +29,7 @@ jobs:
         run: |
          echo '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><version>50.0</version></Package>' > mdapi_output_dir/package.xml
 
-      - name: Create package.zip
-        run: |
-          cd mdapi_output_dir
-          zip -r package.zip .
+ 
          
       - name: Deploy to org
         env:
@@ -44,7 +41,8 @@ jobs:
         run: |
           sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -d -a DevHub
           sfdx force:auth:web:login -r $SF_LOGIN_URL -s -a scratch-org
-          sfdx force:mdapi:deploy -u $SF_USERNAME -d mdapi_output_dir -w 10
+          sfdx force:source:deploy -p force-app  --targetusername $SF_USERNAME -w 10
+          
           
        
          
