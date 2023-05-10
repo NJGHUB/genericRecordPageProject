@@ -18,6 +18,16 @@ jobs:
         with:
           node-version: '14.x'
       - run: npm install -g sfdx-cli@latest
+      
+      - name: Convert source to Metadata API format
+        run: |
+         mkdir unpackaged
+         mv force-app/main/default unpackaged
+         sfdx force:source:convert -r unpackaged -d mdapi_output_dir --loglevel debug
+
+      - name: Create package.xml
+        run: |
+         echo '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><version>50.0</version></Package>' > mdapi_output_dir/package.xml
 
       - name: Deploy to org
         env:
