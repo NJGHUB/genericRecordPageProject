@@ -37,6 +37,10 @@ jobs:
       - name: Deploy to org
         run: |
          sfdx force:source:deploy -p mdapi_output_dir --targetusername ${{ secrets.USERNAME }} --wait 10
+      
+      - name: Run Tests
+        run: |
+         sfdx force:apex:test:run --resultformat junit --outputdir test-results --wait 10
 
       - name: Assign Permission Set
         run: |
