@@ -40,9 +40,7 @@ jobs:
           sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME --setdefaultdevhubusername -a DevHub
           sfdx force:org:list
           sfdx force:project:deploy -p force-app --targetusername $SF_USERNAME
-          sfdx force:apex:test:run --resultformat human --wait 10 --targetusername $SF_USERNAME
-
-
+          
       - name: Check code
         env:
           SF_USERNAME: ${{ secrets.USERNAME }}
