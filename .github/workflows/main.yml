@@ -18,18 +18,16 @@ jobs:
         with:
           node-version: '14.x'
       - run: npm install -g sfdx-cli@latest -g sf-cli@latest         
-          
+      
       - name: Convert source to Metadata API format
         run: |
          mkdir unpackaged
          mv force-app/main/default unpackaged
-         sfdx force:source:convert -r unpackaged -d mdapi_output_dir --loglevel debug
+         sfdx project:source:convert -r unpackaged -d mdapi_output_dir --loglevel debug
 
       - name: Create package.xml
         run: |
          echo '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><version>50.0</version></Package>' > mdapi_output_dir/package.xml
-
- 
          
       - name: Deploy to org
         env:
@@ -41,13 +39,7 @@ jobs:
         run: |
           sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -a DevHub
           sfdx force:source:tracking:enable
-          sfdx force:project:create --projectname MyProject
-          sfdx force:source:convert -d mdapi_output_dir -n "My Project"
-          sfdx force:project:upgrade --projectname MyProject
-          sfdx force:package:create -n MyPackage -d "My Package Description" -r mdapi_output_dir
-          sfdx force:project:package:install -p MyPackage -u $SF_USERNAME -w 10
-          sfdx force:project:deploy:start -p MyPackage -u $SF_USERNAME -w 10
-
+          sfdx force:project:deploy -p mdapi_output_dir -u DevHub -w 10
         
     
           
