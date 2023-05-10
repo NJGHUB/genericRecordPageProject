@@ -17,32 +17,31 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - run: npm install -g sfdx-cli@latest -g sf-cli@latest         
-      
+      - run: npm install -g sfdx-cli@latest         
+          
       - name: Convert source to Metadata API format
         run: |
          mkdir unpackaged
          mv force-app/main/default unpackaged
-         sfdx project:source:convert -r unpackaged -d mdapi_output_dir --loglevel debug
+         sfdx force:source:convert -r unpackaged -d mdapi_output_dir --loglevel debug
+         rm -rf unpackaged
 
       - name: Create package.xml
         run: |
          echo '<?xml version="1.0" encoding="UTF-8"?><Package xmlns="http://soap.sforce.com/2006/04/metadata"><version>50.0</version></Package>' > mdapi_output_dir/package.xml
-         
-      - name: Deploy to org
-        env:
-          SF_USERNAME: ${{ secrets.USERNAME }}
-          SF_PASSWORD: ${{ secrets.PASSWORD }}
-          SF_LOGIN_URL: ${{ secrets.LOGIN_URL }}
-          SF_CONSUMER_KEY: ${{ secrets.CLIENT_ID }}
-          SF_CONSUMER_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+      - name: Authorize Dev Hub
         run: |
-          sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -a DevHub
-          sfdx force:source:tracking:enable
-          sfdx force:project:deploy -p mdapi_output_dir -u DevHub -w 10
-        
-    
-          
-       
-         
-          
+         sfdx auth:jwt:grant --clientid ${{ secrets.CLIENT_ID }} --jwtkeyfile server.key --username ${{ secrets.USERNAME }} --setdefaultdevhubusername -a DevHub
+
+      - name: Deploy to org
+        run: |
+         sfdx force:source:deploy -p mdapi_output_dir --targetusername ${{ secrets.USERNAME }} --wait 10
+
+      - name: Assign Permission Set
+        run: |
+         sfdx force:user:permset:assign -n <permission_set_name> -u ${{ secrets.USERNAME }} 
+
+      - name: Open org
+        run: |
+         sfdx force:org:open -u ${{ secrets.USERNAME }}
