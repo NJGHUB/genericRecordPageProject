@@ -41,10 +41,3 @@ jobs:
           sfdx force:org:list
           sfdx force:project:deploy -p force-app --targetusername $SF_USERNAME
           
-      - name: Check code
-        env:
-          SF_USERNAME: ${{ secrets.USERNAME }}
-          SF_PASSWORD: ${{ secrets.PASSWORD }}
-          SF_LOGIN_URL: ${{ secrets.LOGIN_URL }}
-        run: |
-          sfdx force:source:status --targetusername $SF_USERNAME
