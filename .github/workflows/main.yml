@@ -12,11 +12,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+        
       - name: Install Salesforce CLI
-        run: |
-          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
-          ./sfdx/install
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - run: npm install -g sfdx-cli@latest
 
       - name: Deploy to org
         env:
