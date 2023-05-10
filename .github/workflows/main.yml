@@ -1,33 +1,40 @@
-name: Deploy to Salesforce using JWT Auth
+name: Salesforce Deploy
 
 on:
   push:
     branches:
       - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Install Salesforce CLI
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-          mkdir sfdx
-          tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
+          wget -qO- https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz | tar xJf -
           ./sfdx/install
 
-      - name: Create JWT token
+      - name: Deploy to org
+        env:
+          SF_USERNAME: ${{ secrets.USERNAME }}
+          SF_PASSWORD: ${{ secrets.PASSWORD }}
+          SF_LOGIN_URL: ${{ secrets.LOGIN_URL }}
+          SF_CONSUMER_KEY: ${{ secrets.CLIENT_ID }}
+          SF_CONSUMER_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
-          export PRIVATE_KEY="$(cat ${{ secrets.SERVER }})"
-          export JWT=$(echo "{}" | sfdx force:jwt:grant --clientid ${{ secrets.CLIENT_ID }} --jwtkeyfile ${{ secrets.SERVER }} --username ${{ secrets.USERNAME }} --instanceurl https://login.salesforce.com --setdefaultdevhubusername --json | jq -r '.result.access_token')
-          echo $JWT
+          sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME --setdefaultdevhubusername -a DevHub
+          sfdx force:source:convert --outputdir deploy-package --packagename deploy-package --manifest package.xml
+          sfdx force:mdapi:deploy --wait 10 --deploydir deploy-package --targetusername $SF_USERNAME
+          sfdx force:apex:test:run --resultformat human --wait 10 --targetusername $SF_USERNAME
 
-      - name: Install Dependencies
+      - name: Check code
+        env:
+          SF_USERNAME: ${{ secrets.USERNAME }}
+          SF_PASSWORD: ${{ secrets.PASSWORD }}
+          SF_LOGIN_URL: ${{ secrets.LOGIN_URL }}
         run: |
-          sfdx force:source:install --wait 10 --publishwait 10 --jwtkeyfile  ${{ secrets.SERVER }} --setdefaultdevhubusername --json
-
-      - name: Deploy Source
-        run: |
-          sfdx force:source:deploy -p force-app -u ${{ env.USERNAME }} -w 10 --jwtkeyfile ${{ secrets.SERVER }} --json
-
+          sfdx force:source:status --targetusername $SF_USERNAME
