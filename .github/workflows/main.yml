@@ -39,6 +39,7 @@ jobs:
         run: |
           sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -d -a DevHub
           sfdx force:org:list
-           sfdx force:source:deploy -p force-app --targetusername DevHub
+          sfdx force:source:deploy --targetusername $SF_USERNAME --validateddeployrequestid DevHub
+       
          
           
