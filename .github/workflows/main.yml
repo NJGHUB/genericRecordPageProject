@@ -40,7 +40,6 @@ jobs:
           SF_CONSUMER_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
           sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -d -a DevHub
-          sfdx force:auth:web:login -r $SF_LOGIN_URL -s -a scratch-org
           sfdx force:source:deploy -p force-app  --targetusername $SF_USERNAME -w 10
           
           
