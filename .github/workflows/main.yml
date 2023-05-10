@@ -39,9 +39,9 @@ jobs:
           SF_CONSUMER_KEY: ${{ secrets.CLIENT_ID }}
           SF_CONSUMER_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
-          sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -d -a DevHub
-          
-          sf project deploy start --target-org DevHub  --source-dir force-app
+          sfdx force:auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME -a DevHub
+          sfdx force:source:deploy -p force-app  --target-org  DevHub -w 10
+    
           
        
          
